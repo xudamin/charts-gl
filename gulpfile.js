@@ -1,7 +1,5 @@
 const gulp = require('gulp')
 const clean = require('gulp-clean')
-const sourcemaps = require('gulp-sourcemaps')
-const rollupEach = require('gulp-rollup-each')
 const browserSync = require('browser-sync').create()
 
 const fs = require('fs')
@@ -46,27 +44,4 @@ gulp.task('minify', async() => {
   await fs.writeFileSync(`./dist/${name}.min.js`, minified)
   const gzipped = zlib.gzipSync(minified)
   await fs.writeFileSync(`./dist/${name}.min.js.gz`, gzipped)
-})
-
-gulp.task('pack', () => {
-  return gulp.src([
-    // 'src/index.js',
-    'packages/**/index.js'
-  ])
-  .pipe(sourcemaps.init())
-  .pipe(
-    rollupEach(
-      {
-        external: [/* ... */],
-        plugins: [/* ... */]
-      },
-      file => {
-        return {
-          format: 'iife',
-          name: path.basename(file.path, '.js')
-        }
-      }
-    )
-  )
-  .pipe(gulp.dest('/dist'))
 })
