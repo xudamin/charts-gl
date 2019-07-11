@@ -1,7 +1,6 @@
 const resolve = require('rollup-plugin-node-resolve')
 const babel = require('rollup-plugin-babel')
 const commonjs = require('rollup-plugin-commonjs')
-// const multiEntry = require("rollup-plugin-multi-entry")
 const json = require('rollup-plugin-json')
 const replace = require('rollup-plugin-replace')
 const uglify = require('rollup-plugin-uglify').uglify
@@ -29,7 +28,7 @@ const resolveFile = function(filePath) {
 
 let baseConfig = [
   {
-    input: resolveFile('src/index.js'),
+    input: resolveFile('src/main.js'),
     plugins: [
       // multiEntry(),
       postcss({
@@ -74,7 +73,7 @@ let baseConfig = [
 let keys = Object.keys(components)
 for (let i = 0; i < keys.length; i++) {
   baseConfig.push({
-    input: resolveFile(`${components[keys[i]]}/index.js`),
+    input: resolveFile(`${components[keys[i]]}/main.js`),
     plugins: [
       // multiEntry(),
       postcss({
@@ -110,7 +109,7 @@ for (let i = 0; i < keys.length; i++) {
         name: keys[i],
         // banner,
         // outro,
-        file: resolveFile(`${components[keys[i]]}/index.min.js`)
+        file: resolveFile(`${components[keys[i]]}/dist/index.js`)
       }
     ]
   })

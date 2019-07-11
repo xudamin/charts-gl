@@ -1,5 +1,5 @@
-import ChartBase from '../packages/chart-base/index'
-import ChartBar from '../packages/chart-bar/index'
+import ChartBase from '../packages/chart-base/main'
+import ChartBar from '../packages/chart-bar/main'
 
 import debug from 'debug'
 const log = debug('app:log')
