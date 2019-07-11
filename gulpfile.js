@@ -5,7 +5,6 @@ const browserSync = require('browser-sync').create()
 const fs = require('fs')
 const path = require('path')
 const zlib = require('zlib')
-const uglify = require('uglify-js').minify
 
 const pkg = require('./package.json')
 
@@ -19,7 +18,8 @@ gulp.task('server', () => {
   browserSync.init({
     server: {
       baseDir: './'
-    }
+    },
+    logLevel: "silent"
   })
   gulp.watch(`./dist/${pkg.name}.js`).on('change', browserSync.reload)
   gulp.watch(`./example/*.html`).on('change', browserSync.reload)
@@ -34,14 +34,6 @@ gulp.task('minify', async() => {
   const name = pkg.name
   const dest = pkg.devMain
   const code = fs.readFileSync(dest).toString('utf-8')
-  const u = uglify(code, {
-    'output': {
-      'ascii_only': true,
-      'comments': /^!/
-    }
-  })
-  const minified = u.code
-  await fs.writeFileSync(`./dist/${name}.min.js`, minified)
-  const gzipped = zlib.gzipSync(minified)
+  const gzipped = zlib.gzipSync(code)
   await fs.writeFileSync(`./dist/${name}.min.js.gz`, gzipped)
 })
