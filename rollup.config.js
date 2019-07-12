@@ -4,6 +4,7 @@ const commonjs = require('rollup-plugin-commonjs')
 const json = require('rollup-plugin-json')
 const replace = require('rollup-plugin-replace')
 const uglify = require('rollup-plugin-uglify').uglify
+const bundleWorker = require('rollup-plugin-bundle-worker')
 
 const postcss = require('rollup-plugin-postcss')
 const simplevars = require('postcss-simple-vars')
@@ -41,12 +42,14 @@ let baseConfig = [
         ]
       }),
       resolve({
+        // mainFields: ['jsnext', 'main', 'browser'],
         jsnext: true, // 该属性是指定将Node包转换为ES2015模块
         // main 和 browser 属性将使插件决定将那些文件应用到bundle中
         main: true, // Default: true
         browser: true // Default: false
       }),
       json(),
+      bundleWorker(),
       babel({
         exclude: 'node_modules/**', // 排除node_modules 下的文件
         runtimeHelpers: true
@@ -92,6 +95,7 @@ for (let i = 0; i < keys.length; i++) {
         browser: true // Default: false
       }),
       json(),
+      bundleWorker(),
       babel({
         exclude: 'node_modules/**', // 排除node_modules 下的文件
         runtimeHelpers: true
@@ -109,7 +113,7 @@ for (let i = 0; i < keys.length; i++) {
         name: keys[i],
         // banner,
         // outro,
-        file: resolveFile(`${components[keys[i]]}/dist/index.js`)
+        file: resolveFile(`${components[keys[i]]}/index.js`)
       }
     ]
   })
