@@ -3,8 +3,7 @@ const babel = require('rollup-plugin-babel')
 const commonjs = require('rollup-plugin-commonjs')
 const json = require('rollup-plugin-json')
 const replace = require('rollup-plugin-replace')
-const uglify = require('rollup-plugin-uglify').uglify
-const bundleWorker = require('rollup-plugin-bundle-worker')
+const terser = require('rollup-plugin-terser').terser
 
 const postcss = require('rollup-plugin-postcss')
 const simplevars = require('postcss-simple-vars')
@@ -15,13 +14,14 @@ const cssnano = require('cssnano')
 const path = require('path')
 
 const pkg = require('./package.json')
-const version = process.env.VERSION || pkg.version
 const env = process.env.NODE_ENV
-const year = new Date().getFullYear()
-const banner = `/*!\n * ${pkg.componentName} v${version}\n * LICENSE : ${pkg.license}\n * (c) 2019-${year}\n */`
-const outro = `typeof console !== 'undefined' && console.log('${pkg.componentName} v${version}')`
-
-const components = require('./components.json')
+const banner = `/*!
+ * ${pkg.name}.js v${pkg.version}
+ * ${pkg.homepage}
+ * (c) ${new Date().getFullYear()} CutChart.js Contributors
+ * Released under the MIT License
+ */`
+const outro = `typeof console !== 'undefined' && console.log('${pkg.name} v${pkg.version}')`
 
 const resolveFile = function(filePath) {
   return path.join(__dirname, '.', filePath)
@@ -31,7 +31,6 @@ let baseConfig = [
   {
     input: resolveFile('src/main.js'),
     plugins: [
-      // multiEntry(),
       postcss({
         extensions: ['.css'],
         plugins: [
@@ -49,7 +48,6 @@ let baseConfig = [
         browser: true // Default: false
       }),
       json(),
-      bundleWorker(),
       babel({
         exclude: 'node_modules/**', // 排除node_modules 下的文件
         runtimeHelpers: true
@@ -57,35 +55,29 @@ let baseConfig = [
       commonjs(),
       replace({
         'process.env.NODE_ENV': JSON.stringify(env)
-      }),
-      (env === 'production' && uglify())
+      })
     ],
     output: [
       {
         sourcemap: false,
         format: 'umd',
-        name: pkg.componentName,
-        banner,
-        outro,
+        name: pkg.name,
+        banner: banner,
+        indent: false,
         file: resolveFile(`dist/${pkg.name}.js`)
       }
     ]
-  }
-]
-
-let keys = Object.keys(components)
-for (let i = 0; i < keys.length; i++) {
-  baseConfig.push({
-    input: resolveFile(`${components[keys[i]]}/main.js`),
+  },
+  {
+    input: resolveFile('src/main.js'),
     plugins: [
-      // multiEntry(),
       postcss({
         extensions: ['.css'],
         plugins: [
           simplevars(),
           nested(),
           cssnext({ warnForDuplicates: false }),
-          cssnano()
+          cssnano({ minimize: true })
         ]
       }),
       resolve({
@@ -95,7 +87,6 @@ for (let i = 0; i < keys.length; i++) {
         browser: true // Default: false
       }),
       json(),
-      bundleWorker(),
       babel({
         exclude: 'node_modules/**', // 排除node_modules 下的文件
         runtimeHelpers: true
@@ -104,19 +95,21 @@ for (let i = 0; i < keys.length; i++) {
       replace({
         'process.env.NODE_ENV': JSON.stringify(env)
       }),
-      (env === 'production' && uglify())
+			terser({
+				output: {
+					preamble: banner
+				}
+			})
     ],
-    output: [
-      {
-        sourcemap: false,
-        format: 'umd',
-        name: keys[i],
-        // banner,
-        // outro,
-        file: resolveFile(`${components[keys[i]]}/index.js`)
-      }
-    ]
-  })
-}
+    output: {
+      name: pkg.name,
+      file: resolveFile(`dist/${pkg.name}.min.js`),
+      banner: banner,
+      outro: outro,
+      format: 'umd',
+      indent: false
+    }
+  }
+]
 
 module.exports = baseConfig

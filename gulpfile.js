@@ -17,9 +17,9 @@ gulp.task('help', () => {
 gulp.task('server', () => {
   browserSync.init({
     server: {
-      baseDir: './'
-    },
-    logLevel: "silent"
+      baseDir: './',
+      index: './example/index.html'
+    }
   })
   gulp.watch(`./dist/${pkg.name}.js`).on('change', browserSync.reload)
   gulp.watch(`./example/*.html`).on('change', browserSync.reload)

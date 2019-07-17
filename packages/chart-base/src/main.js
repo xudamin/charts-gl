@@ -1,5 +1,5 @@
-import './src/styles/base.css'
-import {name, version} from './package.json'
+import './styles/base.css'
+import {name, version} from '../package.json'
 
 export default class Base{
   constructor(id) {
