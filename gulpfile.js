@@ -21,7 +21,7 @@ gulp.task('server', () => {
       index: './example/index.html'
     }
   })
-  gulp.watch(`./dist/${pkg.name}.js`).on('change', browserSync.reload)
+  gulp.watch(`./dist/index.js`).on('change', browserSync.reload)
   gulp.watch(`./example/*.html`).on('change', browserSync.reload)
 })
 
@@ -31,9 +31,7 @@ gulp.task('clean', () => {
 })
 
 gulp.task('minify', async() => {
-  const name = pkg.name
-  const dest = pkg.devMain
-  const code = fs.readFileSync(dest).toString('utf-8')
+  const code = fs.readFileSync('./dist/index.min.js').toString('utf-8')
   const gzipped = zlib.gzipSync(code)
   await fs.writeFileSync(`./dist/${name}.min.js.gz`, gzipped)
 })
