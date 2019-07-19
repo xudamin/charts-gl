@@ -1,4 +1,4 @@
-import Base from "chart-base";
+import Base from "@cut-chart/base";
 
 // #TODO
 // import MyWorker from 'worker!./demo.worker.js'

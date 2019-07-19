@@ -5,8 +5,15 @@
   "version": "independent",
   "command": {
     "publish": {
-      "ignoreChanges": ["ignored-file", "*.md"]
-    }
+      "ignoreChanges": ["ignored-file", "*.md", "test", "modules-test"],
+      "conventionalCommits": true,
+      "message": "chore(release): publish"
+    },
+    "bootstrap": {}
   },
+  "npmClient": "yarn",
+  "npmClientArgs": [
+    "--no-lockfile"
+  ],
   "useWorkspace": true
 }
